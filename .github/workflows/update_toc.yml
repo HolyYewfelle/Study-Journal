@@ -12,6 +12,8 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GH_PAT }}  # This ensures the PAT is used to clone the repo
 
       - name: Set Up Python
         uses: actions/setup-python@v4
@@ -22,11 +24,9 @@ jobs:
         run: python update_toc.py
 
       - name: Commit and Push Changes
-        env:
-          GH_PAT: ${{ secrets.GH_PAT }}
         run: |
           git config --global user.name "github-actions"
           git config --global user.email "github-actions@github.com"
           git add TOC.md
-          git commit -m "🔄 Auto-update TOC.md"
-          git push https://x-access-token:${GH_PAT}@github.com/${{ github.repository }}.git main
+          git commit -m "🔄 Auto-update TOC.md" || exit 0  # Avoid error if no changes
+          git push origin main

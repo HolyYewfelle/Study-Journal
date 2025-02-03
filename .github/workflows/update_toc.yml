@@ -1,0 +1,30 @@
+name: Auto-Update TOC
+
+on:
+  push:
+    branches:
+      - main  # Runs when changes are pushed to main
+
+jobs:
+  update-toc:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set Up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      - name: Run TOC Update Script
+        run: python update_toc.py
+
+      - name: Commit and Push Changes
+        run: |
+          git config --global user.name "github-actions"
+          git config --global user.email "github-actions@github.com"
+          git add TOC.md
+          git commit -m "🔄 Auto-update TOC.md"
+          git push

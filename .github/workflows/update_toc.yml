@@ -3,7 +3,7 @@ name: Auto-Update TOC
 on:
   push:
     branches:
-      - main  # Runs when changes are pushed to main
+      - main
 
 jobs:
   update-toc:
@@ -22,9 +22,11 @@ jobs:
         run: python update_toc.py
 
       - name: Commit and Push Changes
+        env:
+          GH_PAT: ${{ secrets.GH_PAT }}
         run: |
           git config --global user.name "github-actions"
           git config --global user.email "github-actions@github.com"
           git add TOC.md
           git commit -m "🔄 Auto-update TOC.md"
-          git push
+          git push https://x-access-token:${GH_PAT}@github.com/${{ github.repository }}.git main
